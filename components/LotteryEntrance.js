@@ -14,6 +14,8 @@ export default function LotteryEntrance() {
     chainId in contractAddresses ? contractAddresses[chainId][0] : null;
   // starting value 0
   const [entranceFee, setEntranceFee] = useState("0");
+  const [numPlayers, setNumPlayers] = useState("0");
+  const [recentWinner, setRecentWinner] = useState("0");
 
   // used for pop ups
   const dispatch = useNotification();
@@ -33,13 +35,31 @@ export default function LotteryEntrance() {
     params: {},
   });
 
+  const { runContractFunction: getNumberOfPlayers } = useWeb3Contract({
+    abi: abi,
+    contractAddress: raffleAddress,
+    functionName: "getNumberOfPlayers",
+    params: {},
+  });
+
+  const { runContractFunction: getRecentWinner } = useWeb3Contract({
+    abi: abi,
+    contractAddress: raffleAddress,
+    functionName: "getRecentWinner",
+    params: {},
+  });
+
   useEffect(() => {
     if (isWeb3Enabled) {
       // try to read raffle entrance fee
       // if using await, need to put in async function to call it correctly
       async function updateUI() {
         const entranceFeeFromCall = (await getEntranceFee()).toString();
+        const numPlayersFromCall = (await getNumberOfPlayers()).toString();
+        const recentWinnerFromCall = (await getRecentWinner()).toString();
         setEntranceFee(entranceFeeFromCall);
+        setNumPlayers(numPlayersFromCall);
+        setRecentWinner(recentWinnerFromCall);
       }
       updateUI();
     }
@@ -76,6 +96,8 @@ export default function LotteryEntrance() {
               Enter Raffle
             </button>
             Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH{" "}
+            Players: {numPlayers}
+            Recent Winner: {recentWinner}
           </div>
         ) : (
           <div>No Raffle Address Detected</div>
