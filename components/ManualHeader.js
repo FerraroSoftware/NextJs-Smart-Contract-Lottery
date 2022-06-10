@@ -4,8 +4,15 @@ import { useEffect } from "react";
 export default function ManualHeader() {
   // hook, gives access to state (connected to metamask or not)
   // isWeb3Enabled, but we use account instead. web3 could be connected, but no account
-  const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3 } =
-    useMoralis();
+  // isWeb3EnableLoading -> checks to see if metamask button popped up
+  const {
+    enableWeb3,
+    account,
+    isWeb3Enabled,
+    Moralis,
+    deactivateWeb3,
+    isWeb3EnableLoading,
+  } = useMoralis();
   // takes function {} and dependency array []
   // keeps checking values in dependncy array and if something changes calls function and rerender
   // if no dependncy array: run anytime something re-renders. careful with this, causes circular render
@@ -49,6 +56,7 @@ export default function ManualHeader() {
               window.localStorage.setItem("connected", "injected");
             }
           }}
+          disabled={isWeb3EnableLoading}
         >
           Connect
         </button>
