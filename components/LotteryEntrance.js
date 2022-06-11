@@ -56,7 +56,7 @@ export default function LotteryEntrance() {
   async function updateUI() {
     const entranceFeeFromCall = (await getEntranceFee()).toString();
     const numPlayersFromCall = (await getNumberOfPlayers()).toString();
-    const recentWinnerFromCall = (await getRecentWinner()).toString();
+    const recentWinnerFromCall = await getRecentWinner();
     setEntranceFee(entranceFeeFromCall);
     setNumPlayers(numPlayersFromCall);
     setRecentWinner(recentWinnerFromCall);
@@ -71,11 +71,6 @@ export default function LotteryEntrance() {
     }
   }, [isWeb3Enabled]);
 
-  const handleSuccess = async function (tx) {
-    await tx.wait(1);
-    handleNewNotification(tx);
-    updateUI();
-  };
   const handleNewNotification = function () {
     dispatch({
       type: "info",
@@ -84,6 +79,12 @@ export default function LotteryEntrance() {
       position: "topR",
       icon: "bell",
     });
+  };
+
+  const handleSuccess = async function (tx) {
+    await tx.wait(1);
+    handleNewNotification(tx);
+    updateUI();
   };
 
   return (
